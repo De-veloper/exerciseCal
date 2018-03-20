@@ -1,0 +1,22 @@
+{
+  "name": "calendar",
+  "version": "1.0.0",
+  "description": "input daily exercise to calendar",
+  "main": "calendar.js",
+  "devDependencies": {
+    "mocha": "^2.5.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kevin",
+  "license": "ISC", 
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/De-veloper/exerciseCal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/De-veloper/exerciseCal/issues"
+  },
+  "homepage": "https://github.com/De-veloper/exerciseCal#readme"
+}
