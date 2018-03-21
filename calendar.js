@@ -6,7 +6,27 @@ var module = (function(){
       var d = new Date(year, month, date);
       return dayArr[d.getDay()];
   } 
-  var dailyActivities = [
+    
+   
+    var fs = require('fs');
+    var getActJson = function(){
+        fs.readFile('act.json', 'utf8', function readFileCallback(err, data){
+            if (err){
+                console.log(err);
+            } else {
+                obj = JSON.parse(data); //now it an object
+                //console.log(obj);
+                return obj;
+                //obj.push({id: 2, square:3}); //add some data
+                //json = JSON.stringify(obj); //convert it back to json
+                //fs.writeFile('myjsonfile.json', json, 'utf8', callback); // write it back 
+            }
+        });
+    }
+    console.log(getActJson());
+    var dailyActivities = getActJson();
+
+  /*var dailyActivities = [
       { 
           year:2018,
           month:1,
@@ -19,7 +39,7 @@ var module = (function(){
           day:22,
           note:'Run'
       }
-  ];
+  ];*/
   var listDaysofMonth = function(year, month){
     var days = '';
     for (var d=1; d<Number(daysofMonth(year,month)); d++){
