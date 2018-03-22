@@ -8,25 +8,39 @@ var module = (function(){
   } 
     
    
-    var fs = require('fs');
-    var getActJson = function(){
-        fs.readFile('act.json', 'utf8', function readFileCallback(err, data){
-            if (err){
-                console.log(err);
-            } else {
-                obj = JSON.parse(data); //now it an object
-                //console.log(obj);
-                return obj;
-                //obj.push({id: 2, square:3}); //add some data
-                //json = JSON.stringify(obj); //convert it back to json
-                //fs.writeFile('myjsonfile.json', json, 'utf8', callback); // write it back 
-            }
-        });
-    }
-    console.log(getActJson());
-    var dailyActivities = getActJson();
+//----- Promise and retrun data
+var fs = require('fs');
+/*var dailyActivities = '';
+var getActJson = new Promise((resolve, reject) => {
+    var obj = '';
+    var json = '';
+    fs.readFile('act.json', 'utf8', function readFileCallback(err, data){
+        if (err){
+            console.log(err);
+        } else {
+            obj = JSON.parse(data); //now it an object
+            //obj.push({id: 2, square:3}); //add some data
+            json = JSON.stringify(obj); //convert it back to json
+            //fs.writeFile('myjsonfile.json', json, 'utf8', callback); // write it back 
+        }
+    });
+    // We call resolve(...) when what we were doing asynchronously was successful, and reject(...) when it failed.
+    // In this example, we use setTimeout(...) to simulate async code. 
+    // In reality, you will probably be using something like XHR or an HTML5 API.
+    setTimeout(function(){
+      resolve(obj); // Yay! Everything went well!
+    }, 250);
+  });
+  getActJson.then((successMessage) => {
+    // successMessage is whatever we passed in the resolve(...) function above.
+    // It doesn't have to be a string, but if it is only a succeed message, it probably will be.
+    //console.log(successMessage);
+    //dailyActivities = successMessage;
+    return successMessage;
+  });*/
+//-----
 
-  /*var dailyActivities = [
+  var dailyActivities = [
       { 
           year:2018,
           month:1,
@@ -39,7 +53,7 @@ var module = (function(){
           day:22,
           note:'Run'
       }
-  ];*/
+  ];
   var listDaysofMonth = function(year, month){
     var days = '';
     for (var d=1; d<Number(daysofMonth(year,month)); d++){
@@ -128,6 +142,7 @@ var module = (function(){
     //
     var dayArea = '<div style="float:left;width:13%;border:1px #333 solid;height:100px;" >'+dateNumber(day, currentMonth)+tempText+'</div>'; 
     return dayArea;
+    
   }
    //list all dates of month
    //When enter year, month, it will show all dates in that month
@@ -161,7 +176,7 @@ var module = (function(){
   return {
     dayArr:dayArr,
     getDay:getDay,
-    dailyActivities:dailyActivities,
+    //dailyActivities:dailyActivities,
     listDaysofMonth:listDaysofMonth,
     daysofMonth:daysofMonth,
     restDaysFromLastMonth:restDaysFromLastMonth,
