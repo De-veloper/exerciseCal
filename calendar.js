@@ -10,37 +10,10 @@ var module = (function(){
    
 //----- Promise and retrun data
 var fs = require('fs');
-/*var dailyActivities = '';
-var getActJson = new Promise((resolve, reject) => {
-    var obj = '';
-    var json = '';
-    fs.readFile('act.json', 'utf8', function readFileCallback(err, data){
-        if (err){
-            console.log(err);
-        } else {
-            obj = JSON.parse(data); //now it an object
-            //obj.push({id: 2, square:3}); //add some data
-            json = JSON.stringify(obj); //convert it back to json
-            //fs.writeFile('myjsonfile.json', json, 'utf8', callback); // write it back 
-        }
-    });
-    // We call resolve(...) when what we were doing asynchronously was successful, and reject(...) when it failed.
-    // In this example, we use setTimeout(...) to simulate async code. 
-    // In reality, you will probably be using something like XHR or an HTML5 API.
-    setTimeout(function(){
-      resolve(obj); // Yay! Everything went well!
-    }, 250);
-  });
-  getActJson.then((successMessage) => {
-    // successMessage is whatever we passed in the resolve(...) function above.
-    // It doesn't have to be a string, but if it is only a succeed message, it probably will be.
-    //console.log(successMessage);
-    //dailyActivities = successMessage;
-    return successMessage;
-  });*/
+
 //-----
 
-  var dailyActivities = [
+  /*var dailyActivities = [
       { 
           year:2018,
           month:1,
@@ -53,7 +26,7 @@ var getActJson = new Promise((resolve, reject) => {
           day:22,
           note:'Run'
       }
-  ];
+  ];*/
   var listDaysofMonth = function(year, month){
     var days = '';
     for (var d=1; d<Number(daysofMonth(year,month)); d++){
@@ -117,33 +90,79 @@ var getActJson = new Promise((resolve, reject) => {
         
         //console.log(firstDayofLastDays +'-'+daysofLastMonth);
         for(var b=firstDayofLastDays; b<=daysofLastMonth; b++){
-            dates += dayComp(year,month,b,false);
+            dates += dayCompHtml(year,month,b,false);
         }
     }
     if(lastDayofMonth!=0 && date!=1){ //When first day of month is not Sun
       for(var a=1; a<(7-lastDayofMonth); a++){
-            dates += dayComp(year,month,a,false);
+            dates += dayCompHtml(year,month,a,false);
         }
     }
 
     return dates;
   }
 
-  var dayComp = function(year, month, day, currentMonth){
-    var tempText ='';
-    var activity = dailyActivities;
-    for (var n=0; n < activity.length; n++){
-        if (year == activity[n].year 
-          && month == activity[n].month
-          && day == activity[n].day){
-              tempText ='<p>'+ activity[n].note +'</p>';
-        }
-    }
-    //
-    var dayArea = '<div style="float:left;width:13%;border:1px #333 solid;height:100px;" >'+dateNumber(day, currentMonth)+tempText+'</div>'; 
+  var dayComp = function(day, currentMonth){
+    var dayArea = ''+dateNumber(day, currentMonth)+'</div>'; 
     return dayArea;
     
   }
+  var dayCompHtml = function(year, month, day, currentMonth, actObj){
+    var note = '';
+    if (typeof actObj!='undefined') {
+          var year, month, day; 
+          year = actObj[0].year;
+          month = actObj[0].month;
+          day = actObj[0].day;
+          note = actObj[0].note;
+    }
+    var dayAreaHtml = '<div id="'+month+day+year+'" style="float:left;width:13%;border:1px #333 solid;height:100px;" >'+dayComp(day, currentMonth)+note+'</div>';
+    return dayAreaHtml;
+  } 
+  /*****
+  ****** Load json file and Insert to Calendar
+  ******/
+  var dailyActivities = '';
+  var getActJson = new Promise((resolve, reject) => {
+    var obj = '';
+    var json = '';
+    fs.readFile('act.json', 'utf8', function readFileCallback(err, data){
+        if (err){
+            console.log(err);
+        } else {
+            obj = JSON.parse(data); //now it an object
+            //obj.push({id: 2, square:3}); //add some data
+            json = JSON.stringify(obj); //convert it back to json
+            //fs.writeFile('myjsonfile.json', json, 'utf8', callback); // write it back 
+        }
+    });
+    // We call resolve(...) when what we were doing asynchronously was successful, and reject(...) when it failed.
+    // In this example, we use setTimeout(...) to simulate async code. 
+    // In reality, you will probably be using something like XHR or an HTML5 API.
+    setTimeout(function(){
+      resolve(obj); // Yay! Everything went well!
+    }, 250);
+  });
+  getActJson.then((obj) => {
+    // successMessage is whatever we passed in the resolve(...) function above.
+    // It doesn't have to be a string, but if it is only a succeed message, it probably will be.
+    //console.log(successMessage);
+    //insertActivities(obj);
+    
+  });
+  /*var insertActivities = function(obj){
+    var year, month, day, note, id; 
+    year = obj[0].year;
+    month = obj[0].month;
+    day = obj[0].day;
+    note = obj[0].note;
+    id = month+day+year;
+    //document.getElementById(id).innerHTML = note;
+    return note;
+  }*/
+
+
+   
    //list all dates of month
    //When enter year, month, it will show all dates in that month
   var listDatesofMonth = function(year, month){
@@ -157,12 +176,14 @@ var getActJson = new Promise((resolve, reject) => {
     dates += listDaysBesidesCurMonth(year, month, 1);
 
     for (var d=1; d<=days; d++){
-        dates += dayComp(year,month,d,true)+(getDayIndex(year, month, d)==6?'<div style="clear:both;"></div>':'');
+        dates += dayCompHtml(year,month,d,true)+(getDayIndex(year, month, d)==6?'<div style="clear:both;"></div>':'');
     }
     //first dates for next monts
     dates += listDaysBesidesCurMonth(year, month, days);
     return dates;
   }
+
+
   //create day component
   var dateNumber = function(day, currentMonth){
       return '<span style="text-align:center;'+(currentMonth?'font-weight:bold;opacity:1':'opacity:0.5')+'">'+day+'</span>';
@@ -172,6 +193,15 @@ var getActJson = new Promise((resolve, reject) => {
   }
   var yearHeader = function(year){
       return '<div style="clear:both;"></div><center><h1>'+year+'</h1></center>';
+  }
+
+  /*********Build full calendar by month or year**********/
+  var buildHtml = function(year){
+    var html = '';
+    for (var c=1; c<=12;c++){
+        html+=listDatesofMonth(year,c);
+    }
+    return html;
   }
   return {
     dayArr:dayArr,
@@ -184,9 +214,12 @@ var getActJson = new Promise((resolve, reject) => {
     listDaysBesidesCurMonth:listDaysBesidesCurMonth,
     listDatesofMonth:listDatesofMonth,
     dayComp:dayComp,
+    dayCompHtml:dayCompHtml,
     dateNumber:dateNumber,
     monthHeader:monthHeader,
-    yearHeader:yearHeader
+    yearHeader:yearHeader,
+    //insertActivities:insertActivities,
+    buildHtml:buildHtml
   }
 }());
 
