@@ -8,25 +8,10 @@ var module = (function(){
   } 
     
    
-//----- Promise and retrun data
-var fs = require('fs');
+
 
 //-----
 
-  /*var dailyActivities = [
-      { 
-          year:2018,
-          month:1,
-          day:22,
-          note:'Workout'
-      },
-      { 
-          year:2018,
-          month:2,
-          day:22,
-          note:'Run'
-      }
-  ];*/
   var listDaysofMonth = function(year, month){
     var days = '';
     for (var d=1; d<Number(daysofMonth(year,month)); d++){
@@ -103,26 +88,34 @@ var fs = require('fs');
   }
 
   var dayComp = function(day, currentMonth){
-    var dayArea = ''+dateNumber(day, currentMonth)+'</div>'; 
+    var dayArea = dateNumber(day, currentMonth); 
     return dayArea;
     
   }
   var dayCompHtml = function(year, month, day, currentMonth, actObj){
     var note = '';
     if (typeof actObj!='undefined') {
-          var year, month, day; 
-          year = actObj[0].year;
-          month = actObj[0].month;
-          day = actObj[0].day;
-          note = actObj[0].note;
+          var matchAct = actObj.filter(function(el){
+              if (el.year == year && el.month == month && el.day == day){
+                return el;
+              }
+          });
+          if(matchAct.length!=0) {
+            //console.log(matchAct[0].note);
+            note = matchAct[0].note;
+          }
+          //
     }
-    var dayAreaHtml = '<div id="'+month+day+year+'" style="float:left;width:13%;border:1px #333 solid;height:100px;" >'+dayComp(day, currentMonth)+note+'</div>';
+    var dayAreaHtml = '<div style="float:left;width:13%;border:1px #333 solid;height:100px;" >'+dayComp(day, currentMonth)+note+'</div>';
     return dayAreaHtml;
   } 
   /*****
   ****** Load json file and Insert to Calendar
   ******/
-  var dailyActivities = '';
+  //var test = function(){
+//----- Promise and retrun data
+/*var fs = require('fs');
+
   var getActJson = new Promise((resolve, reject) => {
     var obj = '';
     var json = '';
@@ -143,29 +136,29 @@ var fs = require('fs');
       resolve(obj); // Yay! Everything went well!
     }, 250);
   });
+
   getActJson.then((obj) => {
-    // successMessage is whatever we passed in the resolve(...) function above.
-    // It doesn't have to be a string, but if it is only a succeed message, it probably will be.
-    //console.log(successMessage);
-    //insertActivities(obj);
-    
+      // successMessage is whatever we passed in the resolve(...) function above.
+      // It doesn't have to be a string, but if it is only a succeed message, it probably will be.
+      //console.log(successMessage);
+      insertActivities(obj);
   });
-  /*var insertActivities = function(obj){
-    var year, month, day, note, id; 
-    year = obj[0].year;
-    month = obj[0].month;
-    day = obj[0].day;
-    note = obj[0].note;
-    id = month+day+year;
-    //document.getElementById(id).innerHTML = note;
-    return note;
-  }*/
+*/
+  
+
+  
+//}
+
+  var insertActivities = function(obj){
+    return buildHtml(2018, obj);
+    //return note;
+  }
 
 
    
    //list all dates of month
    //When enter year, month, it will show all dates in that month
-  var listDatesofMonth = function(year, month){
+  var listDatesofMonth = function(year, month, obj){
     var dates = '';
         dates += (month==1?yearHeader(year):'') + monthHeader(month); //Show each month (When Jan, show year)
 
@@ -176,7 +169,7 @@ var fs = require('fs');
     dates += listDaysBesidesCurMonth(year, month, 1);
 
     for (var d=1; d<=days; d++){
-        dates += dayCompHtml(year,month,d,true)+(getDayIndex(year, month, d)==6?'<div style="clear:both;"></div>':'');
+        dates += dayCompHtml(year,month,d,true, obj)+(getDayIndex(year, month, d)==6?'<div style="clear:both;"></div>':'');
     }
     //first dates for next monts
     dates += listDaysBesidesCurMonth(year, month, days);
@@ -196,11 +189,15 @@ var fs = require('fs');
   }
 
   /*********Build full calendar by month or year**********/
-  var buildHtml = function(year){
+  var buildHtml = function(year, obj){
     var html = '';
+    html += '<!doctype html>\n<html lang="en">\n';
+    html += '\n<meta charset="utf-8">\n<title>Test web page on node.js</title>\n';
+    html += '<div id="content">';
     for (var c=1; c<=12;c++){
-        html+=listDatesofMonth(year,c);
+        html+=listDatesofMonth(year,c, obj);
     }
+    html += '</div>';
     return html;
   }
   return {
@@ -218,8 +215,9 @@ var fs = require('fs');
     dateNumber:dateNumber,
     monthHeader:monthHeader,
     yearHeader:yearHeader,
-    //insertActivities:insertActivities,
-    buildHtml:buildHtml
+    insertActivities:insertActivities,
+    buildHtml:buildHtml//,
+    //getActJson:getActJson
   }
 }());
 
